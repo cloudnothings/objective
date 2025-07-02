@@ -1,29 +1,79 @@
-# Create T3 App
+# Objective
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A powerful visual interface for creating AI-powered data generation workflows with cost management and version control.
 
-## What's next? How do I make an app with this?
+## Overview
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Objective is a Next.js application that provides a streamlined dashboard for building structured data generation pipelines using various OpenAI models (GPT-4, o1, o3 series, and more). The application features a three-column workflow that guides you from input configuration through AI generation to structured output.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Key Features
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### 🎯 **Three-Column Workflow**
 
-## Learn More
+- **Input Column**: Configure data sources (manual strings or API fetch requests)
+- **Generator Column**: Set up AI models with custom system messages and JSON schemas
+- **Output Column**: View generated results with detailed cost and token analytics
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### 🤖 **AI Model Support**
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- Latest GPT models (GPT-4.1, GPT-4o series)
+- Reasoning models (o1, o3 series) with special reasoning capabilities
+- Real-time cost estimation and token counting
+- Model comparison with pricing per million tokens
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### 📋 **Schema Management**
 
-## How do I deploy this?
+- Visual schema builder for structured data generation
+- Raw JSON schema editing with code editor
+- Schema import/export functionality
+- Real-time schema validation and preview
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### 💰 **Cost Management**
+
+- Real-time token counting for inputs, system messages, and schemas
+- Accurate cost estimation before generation
+- High-cost warnings and context size limits
+- Model recommendations for cost optimization
+
+### 🔄 **Version Control**
+
+- Save and manage different versions of input configurations
+- Generator card versioning with rollback capabilities
+- Track changes with unsaved state indicators
+- Compare different configuration versions
+
+### ⚡ **Advanced Features**
+
+- AI-assisted prompt and schema generation
+- Fetch request configuration for API data sources
+- Token visualization and breakdown analysis
+- Responsive design with mobile support
+- Dark/light theme support
+
+## Use Cases
+
+- **Data Generation**: Create structured datasets using AI models
+- **API Testing**: Test and validate API responses with AI processing
+- **Prompt Engineering**: Develop and iterate on AI prompts with cost tracking
+- **Schema Design**: Build and test JSON schemas for data validation
+- **Workflow Automation**: Create reusable AI data processing pipelines
+
+## Technology Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, Radix UI components
+- **AI Integration**: AI SDK with OpenAI support
+- **State Management**: Zustand
+- **Token Analysis**: Tiktoken for accurate token counting
+- **Validation**: Zod for schema validation
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies: `pnpm install`
+3. Run the development server: `pnpm dev`
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## License
+
+This project is private and proprietary.
