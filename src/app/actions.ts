@@ -65,6 +65,63 @@ export async function generateAiObject(
     return response.object;
   } catch (error) {
     console.error("AI generation error:", error);
+
+    // Enhanced error handling for schema validation errors
+    let detailedError = null;
+
+    // Check for validation errors in the error structure
+    const findValidationErrors = (
+      err: unknown,
+    ): { issues: unknown[]; value: unknown } | null => {
+      if (!err || typeof err !== "object") return null;
+
+      const errorObj = err as Record<string, unknown>;
+
+      // Check if this error has issues directly
+      if ("issues" in errorObj && Array.isArray(errorObj.issues)) {
+        return {
+          issues: errorObj.issues,
+          value: "value" in errorObj ? errorObj.value : null,
+        };
+      }
+
+      // Check the cause chain
+      if ("cause" in errorObj && errorObj.cause) {
+        return findValidationErrors(errorObj.cause);
+      }
+
+      return null;
+    };
+
+    detailedError = findValidationErrors(error);
+
+    if (detailedError && detailedError.issues.length > 0) {
+      const issueDescriptions = detailedError.issues
+        .map((issue: unknown) => {
+          if (issue && typeof issue === "object" && issue !== null) {
+            const issueObj = issue as Record<string, unknown>;
+            const path = Array.isArray(issueObj.path)
+              ? issueObj.path.join(".")
+              : "root";
+            const message =
+              typeof issueObj.message === "string"
+                ? issueObj.message
+                : "Validation error";
+            return `Field "${path}": ${message}`;
+          }
+          return "Unknown validation error";
+        })
+        .join("; ");
+
+      const generatedValue = detailedError.value
+        ? JSON.stringify(detailedError.value, null, 2)
+        : "Unknown";
+
+      throw new Error(
+        `Schema validation failed: ${issueDescriptions}. Generated value: ${generatedValue}`,
+      );
+    }
+
     // Pass a more user-friendly error message to the client
     throw new Error(
       `AI generation failed: ${error instanceof Error ? error.message : "An unknown error occurred"}`,
@@ -103,6 +160,9 @@ CRITICAL RULES:
 - Use camelCase for field names
 - Do NOT include any explanations, markdown, or extra text
 - Do NOT wrap in code blocks or backticks
+- NEVER use .max() constraints - they are forbidden
+- Do NOT use .min(), .length(), or other size constraints
+- Focus on data types and structure, not size limits
 
 VALID EXAMPLE:
 z.object({
@@ -112,7 +172,7 @@ z.object({
 })`,
       prompt: `Create a Zod schema for: ${prompt}
 
-Return ONLY the schema code, no explanations.`,
+Return ONLY the schema code, no explanations. Do not include any .max() or size constraints.`,
     });
 
     // Clean up the response to ensure it's just the schema
@@ -159,7 +219,10 @@ SCHEMA RULES:
 - Use appropriate types: z.string(), z.number(), z.boolean(), z.array(), z.enum(), z.object()
 - Add .describe() for clarity
 - Use camelCase field names
-- Make it comprehensive but not overly complex`,
+- Make it comprehensive but not overly complex
+- NEVER use .max() constraints - they are forbidden
+- Do NOT use .min(), .length(), or other size constraints
+- Focus on data types and structure, not size limits`,
       schema: z.object({
         systemMessage: z
           .string()
