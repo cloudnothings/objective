@@ -12,9 +12,7 @@ import type {
   OutputCardType,
   SchemaField,
   DialogState,
-  GenerationReference,
   FetchRequestConfig,
-  AVAILABLE_MODELS,
 } from "@/types/dashboard";
 
 const defaultSchemaFields: SchemaField[] = [
@@ -205,7 +203,7 @@ const createInitialGeneratorCard = (
       "You are a helpful assistant that extracts structured data from user input.",
     schemaFields: defaultSchemaFields,
     rawSchema: null,
-    model: "gpt-4o",
+    model: "gpt-4.1-nano",
     createdAt: new Date(),
   };
 
@@ -216,7 +214,7 @@ const createInitialGeneratorCard = (
       "You are a helpful assistant that extracts structured data from user input.",
     schemaFields: defaultSchemaFields,
     rawSchema: null,
-    model: "gpt-4o",
+    model: "gpt-4.1-nano",
     versions: [initialVersion],
     currentVersion: 1,
     hasUnsavedChanges: false,
@@ -296,9 +294,6 @@ export const useDashboardStore = create<DashboardStore>((set, get) => {
 
     // Actions
     addInputCard: (type: "string" | "fetch" = "string") => {
-      const { inputCards } = get();
-      const newId = generateId();
-
       if (type === "fetch") {
         get().addFetchRequestInputCard();
       } else {
