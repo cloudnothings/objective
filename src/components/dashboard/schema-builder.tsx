@@ -1,6 +1,6 @@
 "use client"
 
-import type { SchemaField } from "@/app/page"
+import type { SchemaField } from "@/types/dashboard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"

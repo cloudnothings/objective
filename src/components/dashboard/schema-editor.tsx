@@ -24,7 +24,7 @@ export function SchemaEditor({ value, onChange }: SchemaEditorProps) {
   name: z.string().describe('Name'),
   age: z.number().describe('Age')
 })"
-      className="h-40 w-full resize-none text-xs font-mono"
+      className="h-full w-full resize-none text-xs font-mono"
     />
   )
 }
