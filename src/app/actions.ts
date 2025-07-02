@@ -1,7 +1,7 @@
 "use server";
 
 import { generateObject, generateText } from "ai";
-import { openai, createOpenAI } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 
 export interface GenerateResult {
@@ -18,7 +18,7 @@ export async function generateAiObject(
   model: string,
   systemMessage: string,
   outputSchemaString: string,
-  apiKey?: string,
+  apiKey: string,
 ): Promise<GenerateResult> {
   let schema: z.ZodTypeAny;
 
@@ -48,7 +48,7 @@ export async function generateAiObject(
   }
 
   try {
-    const provider = apiKey ? createOpenAI({ apiKey }) : openai;
+    const provider = createOpenAI({ apiKey });
     const response = await generateObject({
       model: provider(model),
       schema: schema,
@@ -138,12 +138,13 @@ export async function generateAiObject(
 
 export async function generateSystemMessage(
   prompt: string,
-  apiKey?: string,
+  apiKey: string,
+  model: string,
 ): Promise<string> {
   try {
-    const client = apiKey ? openai({ apiKey }) : openai("gpt-4o");
+    const client = createOpenAI({ apiKey });
     const { text } = await generateText({
-      model: apiKey ? client("gpt-4o") : openai("gpt-4o"),
+      model: client(model),
       system: `You are an expert at writing system messages for AI assistants. Create concise, effective system messages that clearly define the AI's role and behavior. Focus on being specific about the task, output format, and any constraints. Keep it under 200 words.`,
       prompt: `Create a system message for an AI that should: ${prompt}`,
     });
@@ -159,12 +160,13 @@ export async function generateSystemMessage(
 
 export async function generateZodSchema(
   prompt: string,
-  apiKey?: string,
+  apiKey: string,
+  model: string,
 ): Promise<string> {
   try {
-    const client = apiKey ? openai({ apiKey }) : openai("gpt-4o");
+    const client = createOpenAI({ apiKey });
     const { text } = await generateText({
-      model: apiKey ? client("gpt-4o") : openai("gpt-4o"),
+      model: client(model),
       system: `You are an expert at creating Zod schemas. Generate valid Zod schema code that matches the user's requirements. 
 
 CRITICAL RULES:
@@ -217,12 +219,13 @@ Return ONLY the schema code, no explanations. Do not include any .max() or size 
 
 export async function generateSystemAndSchema(
   prompt: string,
-  apiKey?: string,
+  apiKey: string,
+  model: string,
 ): Promise<{ systemMessage: string; schema: string }> {
   try {
-    const provider = apiKey ? createOpenAI({ apiKey }) : openai;
+    const provider = createOpenAI({ apiKey });
     const { object } = await generateObject({
-      model: provider("gpt-4o"),
+      model: provider(model),
       system: `You are an expert at creating AI data extraction configurations. Given a user's description, generate both a system message and Zod schema.
 
 SYSTEM MESSAGE RULES:

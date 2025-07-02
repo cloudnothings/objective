@@ -79,8 +79,19 @@ export const useDashboardActions = () => {
 
   const handleGenerateSystemMessage = useCallback(
     async (prompt: string) => {
-      const { systemMessageDialog } = useDashboardStore.getState();
+      const { systemMessageDialog, generatorCards } =
+        useDashboardStore.getState();
       if (!systemMessageDialog.cardId) return;
+
+      // Find the current generator card to get its model
+      const currentCard = generatorCards.find(
+        (card) => card.id === systemMessageDialog.cardId,
+      );
+      if (!currentCard) {
+        setImportError("Generator card not found.");
+        setTimeout(() => setImportError(null), 5000);
+        return;
+      }
 
       setIsGeneratingSystem(true);
       try {
@@ -93,7 +104,11 @@ export const useDashboardActions = () => {
           return;
         }
 
-        const generatedMessage = await generateSystemMessage(prompt, apiKey);
+        const generatedMessage = await generateSystemMessage(
+          prompt,
+          apiKey,
+          currentCard.model,
+        );
         updateGeneratorCard(systemMessageDialog.cardId, {
           systemMessage: generatedMessage,
         });
@@ -119,8 +134,18 @@ export const useDashboardActions = () => {
 
   const handleGenerateSchema = useCallback(
     async (prompt: string) => {
-      const { schemaDialog } = useDashboardStore.getState();
+      const { schemaDialog, generatorCards } = useDashboardStore.getState();
       if (!schemaDialog.cardId) return;
+
+      // Find the current generator card to get its model
+      const currentCard = generatorCards.find(
+        (card) => card.id === schemaDialog.cardId,
+      );
+      if (!currentCard) {
+        setImportError("Generator card not found.");
+        setTimeout(() => setImportError(null), 5000);
+        return;
+      }
 
       setIsGeneratingSchema(true);
       try {
@@ -133,7 +158,11 @@ export const useDashboardActions = () => {
           return;
         }
 
-        const generatedSchema = await generateZodSchema(prompt, apiKey);
+        const generatedSchema = await generateZodSchema(
+          prompt,
+          apiKey,
+          currentCard.model,
+        );
         const validation = validateZodSchema(generatedSchema);
 
         if (!validation.isValid) {
@@ -164,8 +193,18 @@ export const useDashboardActions = () => {
 
   const handleGenerateFullConfig = useCallback(
     async (prompt: string) => {
-      const { fullConfigDialog } = useDashboardStore.getState();
+      const { fullConfigDialog, generatorCards } = useDashboardStore.getState();
       if (!fullConfigDialog.cardId) return;
+
+      // Find the current generator card to get its model
+      const currentCard = generatorCards.find(
+        (card) => card.id === fullConfigDialog.cardId,
+      );
+      if (!currentCard) {
+        setImportError("Generator card not found.");
+        setTimeout(() => setImportError(null), 5000);
+        return;
+      }
 
       setIsGeneratingFullConfig(true);
       try {
@@ -181,6 +220,7 @@ export const useDashboardActions = () => {
         const { systemMessage, schema } = await generateSystemAndSchema(
           prompt,
           apiKey,
+          currentCard.model,
         );
 
         // Validate the generated schema
